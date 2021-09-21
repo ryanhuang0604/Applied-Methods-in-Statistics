@@ -1,0 +1,114 @@
+---
+title: "HW 3"
+author: "309554005 黃睿宇"
+CJKmainfont: 標楷體
+output: 
+  pdf_document:
+    fig_caption: yes
+    # keep_tex: yes
+    includes:
+      header-includes:
+        -\usepackage{xeCJK}
+    latex_engine: xelatex
+  geometry: vmargin = 1
+  linespread: 1.1
+---
+
+**Problem 1**
+
+**(a)**
+```{r}
+data1 <- read.csv(file="wastewater.csv", header=TRUE)
+AF <- data1$AF
+FS <- data1$FS
+FCC <- data1$FCC
+treatment <- c(AF, FS, FCC)
+method <- c(rep("AF",10), rep("FS",10), rep("FCC",10))
+model <- aov(treatment ~ method, data=data1)
+summary(model)
+```
+Since $\text{p-value} = 1.03\times 10^{-10} < 0.05$, we could conclude that there is significant difference among three treatment methods.\newline\newline
+
+
+**(b)**
+```{r}
+boxplot(treatment ~ method, data=data1)
+```
+Since the overall value of foam separation is larger than other groups, its removal ability should be the best.\newline\newline
+
+
+**Problem 2**
+
+```{r}
+data2 <- read.csv(file="Fern.csv", header=TRUE)
+growth <- data2$Response_area
+block <- data2$Block_age
+treatment <- data2$wave_light
+model <- aov(growth ~ block+treatment, data=data2)
+summary(model)
+```
+
+**(a)**\newline
+Age is the blocking variable.\newline
+Since $\text{p-value} = 0.0176 < 0.05$, we could conclude that the blocking effect (age) exists at 5% level of significance.\newline
+```{r}
+boxplot(growth ~ block, data=data2, main="Boxplot of growths and blocks")
+```
+We could get the same conclusion from the boxplot.\newline\newline
+
+
+**(b)**\newline
+Since $\text{p-value} = 0.2713 > 0.05$, we could conclude that the treatment effect (wavelength of light) does not exist at 5% level of significance.\newline
+```{r}
+boxplot(growth ~ treatment, data=data2, main="Boxplot of growths and treatments")
+```
+We could get the same conclusion from the boxplot.\newline\newline
+
+
+**Problem 3**
+
+**(a)**
+```{r}
+data3 <- read.csv(file="Cotinine.csv", header=TRUE)
+cotinine <- data3$cotinine
+gender <- as.factor(data3$Gender)
+racial <- as.factor(data3$Race)
+
+interaction.plot(x.factor = racial,     # variable to plot on x-axis
+                 trace.factor = gender, # variable to specify "traces"; here, lines
+                 response = cotinine,   # variable to plot on y-axis
+                 fun = mean,            # summary statistic to be plotted for response variable
+                 type = "b",            # type of plot, here "l" for lines
+                 xlab = "Racial",
+                 ylab = "Cotinine")
+```
+Since the two lines aren't parallel, we could infer that there exists interaction effect.\newline\newline
+
+
+**(b)**
+```{r}
+data3 <- data.frame(cotinine, gender, racial)
+model <- aov(cotinine ~ gender+racial+gender*racial, data=data3)
+summary(model)
+```
+Since $\text{p-value} = 0.527 > 0.05$, we could conclude that the interaction effect does not exist at 5% level of significance.\newline\newline
+
+
+**(c)**
+```{r}
+model <- aov(cotinine ~ gender+racial, data=data3)
+summary(model)
+```
+For gender factor, since $\text{p-value} = 0.651 > 0.05$, we could conclude that the gender factor has no effect on the cotinine level.\newline
+For racial factor, since $\text{p-value} = 0.156 > 0.05$, we could conclude that the racial factor has no effect on the cotinine level as well.\newline\newline
+
+```{r}
+model <- aov(cotinine ~ gender, data=data3[which(racial=="White"),])
+summary(model)
+```
+Since $\text{p-value} = 0.496 > 0.05$, we could conclude that the white racial has no effect on the cotinine level.\newline
+```{r}
+model <- aov(cotinine ~ gender, data=data3[which(racial=="Black"),])
+summary(model)
+```
+Since $\text{p-value} = 0.883 > 0.05$, we could conclude that the black racial has no effect on the cotinine level.

@@ -1,0 +1,150 @@
+---
+title: "HW 4"
+author: "309554005 黃睿宇"
+CJKmainfont: 標楷體
+output: 
+  pdf_document:
+    fig_caption: yes
+    # keep_tex: yes
+    includes:
+      header-includes:
+        -\usepackage{xeCJK}
+    latex_engine: xelatex
+  geometry: vmargin = 1
+  linespread: 1.1
+---
+
+**Problem 1**
+
+**(a)**
+```{r}
+status <- c("Admit", "Deny")
+gender <- c("Male", "Female")
+data <- c(490, 210, 280, 220)
+table <- expand.grid(status=status, gender=gender)
+table <- cbind(table, count=data)
+result <- xtabs(count ~ gender+status, table)
+addmargins(result)
+```
+
+
+**(b)**
+```{r}
+prop.table(result, 1)
+```
+The percentage of male applicants who are admitted $= \frac{490}{700} = 70\%$.\newline
+The percentage of female applicants who are admitted $= \frac{280}{500} = 56\%$.\newline\newline
+
+
+**(c)**
+```{r}
+business <- c(480, 120, 180, 20)
+table1 <- expand.grid(status=status, gender=gender)
+table1 <- cbind(table1, count=business)
+result1 <- xtabs(count ~ gender+status, table1)
+prop.table(result1, 1)
+```
+In business school, the percentage of male applicants admitted $= \frac{480}{600} = 80\%$; the percentage of female applicants admitted $= \frac{180}{200} = 90\%$.\newline
+
+```{r}
+law <- c(10, 90, 100, 200)
+table2 <- expand.grid(status=status, gender=gender)
+table2 <- cbind(table2, count=law)
+result2 <- xtabs(count ~ gender+status, table2)
+prop.table(result2, 1)
+```
+In law school, the percentage of male applicants admitted $= \frac{10}{100} = 10\%$; the percentage of female applicants admitted $= \frac{100}{300} = 33.33\%$.\newline\newline
+
+
+**(d)**\newline
+The percentage of admitted business school is $\frac{660}{770} = 85.7\%$, while that of admitted law school is $\frac{110}{770} = 14.3\%$. Thus, we could see that the percentage of getting admission from business school is higher than from law school. In addition, $\frac{600}{700} = 85.7\%$ of male applicants applied for business school, while $\frac{300}{500} = 60\%$ of female applicants applied for law school. As a result, we could see that since women tended to apply to school with low admission rate, the overall result will show that men are easier to get admission.\newline\newline
+
+
+**Problem 2**
+
+**(a)**
+```{r}
+program <- c("Accounting", "Administration", "Economics", "Finance")
+gender <- c("Female", "Male")
+data <- c(68, 91, 5, 61, 56, 40, 6, 59)
+table <- expand.grid(program=program, gender=gender)
+table <- cbind(table, count=data)
+result <- xtabs(count ~ program+gender, table)
+chi <- chisq.test(result)
+chi
+```
+Since $\text{p-value} = 0.0127 < 0.05$, we could conclude that there is relationship between the gender of students and their choice of major.\newline\newline
+
+
+**(b)**
+```{r}
+expected <- chi$expected
+sum((data-expected)^2 / expected)
+```
+$\text{Chi-square} = 10.82673$ is equal to the above result.\newline\newline
+
+
+**(c)**
+```{r}
+prop.table(result, 2)
+```
+![Caption for the picture.](D:\Ryan\Ryan\5交通大學\課程\一下\03統計應用方法\作業\HW4\img.png)
+\newline
+In both accounting and economics, the percentage of male and female is almost the same (the difference is less than 5%). While in other two majors, women have higher percentage choosing administration and men have higher percentage choosing finance.\newline\newline
+
+
+**(d)**
+```{r}
+observed <- chi$observed
+expected <- chi$expected
+data <- c((observed-expected)^2 / expected)
+table <- expand.grid(program=program, gender=gender)
+table <- cbind(table, count=data)
+result <- xtabs(count ~ program+gender, table)
+```
+```{r}
+observed
+expected
+result
+```
+Cells of "female majors in administration" and "male majors in administration" have the largest terms of chi-square statistic. In these cells, the difference between their observed value and expected value is much more bigger than others.\newline\newline
+
+
+**(e)**
+```{r}
+1 - sum(observed) / 722
+```
+There is about $46.54\%$ of the students did not respond to the questionnaire.\newline\newline
+
+
+**Problem 3**
+
+**(a)**
+```{r}
+TA <- c(0.32, 0.41, 0.2, 0.07)
+professor <- c(22, 38, 20, 11)
+
+professor / sum(professor)
+```
+The distribution of grade taught by professor is (0.24, 0.42, 0.22, 0.12) (corresponding to grade (A, B, C, D/F)), which is different from (0.32, 0.41, 0.2, 0.07). The ratio of grade A given by professor is less than that given by TA, while the ratio of grade D/F given by professor is more than that given by TA.\newline\newline
+
+
+**(b)**
+```{r}
+TA * sum(professor)
+```
+The expected counts of each grade in professor's section should be (29, 37, 18, 6). \newline\newline
+
+
+**(c)**
+```{r}
+grade <- c(22, 38, 20, 11)
+expected <- c(rep(sum(grade)/4, 4))
+chi_square <- sum((grade-expected)^2 / expected)
+```
+```{r}
+chi_square
+pchisq(chi_square, df=3)
+1 - pchisq(chi_square, df=3)
+```
+Since $\text{chi-square} = 16.64835 > 0.9991653$ and $\text{p-value} = 0.0008347256 < 0.05$, we could conclude that not all the probability of grade is equal to $\frac{1}{4}$, that is, the professor follows a different grade distribution.

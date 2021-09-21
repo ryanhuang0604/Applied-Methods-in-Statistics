@@ -1,0 +1,138 @@
+---
+title: "HW 1"
+author: "309554005 黃睿宇"
+CJKmainfont: 標楷體
+output: 
+  pdf_document:
+    fig_caption: yes
+    # keep_tex: yes
+    includes:
+      header-includes:
+        -\usepackage{xeCJK}
+    latex_engine: xelatex
+  geometry: vmargin = 1
+  linespread: 1.1
+---
+
+**Problem 1**
+
+**(a)**
+```{r}
+returning_percent <- c(74, 66, 81, 52, 73, 62, 52, 45, 62, 46, 60, 46, 38)
+new_adult <- c(5, 6, 8, 11, 12, 15, 16, 17, 18, 18, 19, 20, 20)
+plot(returning_percent, new_adult, xlab="Percentage of Returning", ylab="Number of New Joining")
+```
+We could see that the percent of adult birds that return from the previous year is inversely proportional to the number of new adults that join.\newline
+```{r}
+boxplot(returning_percent, xlab="Percentage of Returning")
+boxplot(new_adult, xlab="Number of New Joining")
+```
+There is no possible outliers from the boxplot charts.\newline\newline
+
+
+**(b)**
+```{r}
+mean(returning_percent)
+mean(new_adult)
+sd(returning_percent)**2
+sd(new_adult)**2
+```
+$\bar{X} = 58.23077\\
+\bar{Y} = 14.23077\\
+S_x^2 = 169.859\\
+S_y^2 = 28.02564$\newline
+```{r}
+sum = 0.0
+for (i in 1:length(returning_percent)){
+  count <- ((returning_percent[i]-mean(returning_percent)) * (new_adult[i] - mean(new_adult)))
+  sum <- sum + count
+}
+r <- sum / ((sd(returning_percent)*sqrt(length(returning_percent)-1)) * (sd(new_adult)*sqrt(length(new_adult)-1)))
+r
+```
+$\text{Pearson's correlation} = -0.7484673$\newline\newline
+
+
+**(c)**
+```{r}
+cor(returning_percent, new_adult, method="pearson")
+cor(returning_percent, new_adult, method="kendall")
+cor(returning_percent, new_adult, method="spearman")
+```
+$\text{Pearson's correlation} = -0.7484673\\
+\text{Kendall's tau} = -0.5960396\\
+\text{Spearman's rho} = -0.7538043$\newline\newline
+
+
+**(d)**
+```{r}
+xy <- data.frame(returning_percent, new_adult)
+model <- lm(new_adult ~ returning_percent, data=xy)
+model
+```
+$\hat{\alpha} = 31.934\\
+\hat{\beta} = -0.304$\newline
+```{r}
+sigma(model)
+```
+$\hat{\sigma} = 3.666891$\newline\newline
+
+
+**(e)**
+```{r}
+summary(model)
+```
+$R^2 = 0.5602$\newline
+```{r}
+r**2
+```
+$r^2 = 0.5602033\\
+\Rightarrow R^2 = r^2$\newline\newline
+
+
+**(f)**
+```{r}
+residuals(model)
+plot(model, which=1)
+```
+Since the line should be horizontal and close to 0 on the residual plot ideally, we could infer that residual variance does not conform to uniformity and residual mean isn't 0.\newline\newline
+
+
+**Problem 2**
+
+**(a)**
+```{r}
+soda <- c(35.1, 35.7, 46.2, 47.4, 47.9, 49.7, 49.3)
+milk <- c(27.6, 26.7, 25.7, 23.9, 23.0, 22.9, 23.3)
+plot(soda, milk, xlab="Consumption of soda per capita", ylab="Consumption of milk per capita")
+```
+We could see that the consumption of soda per capita is inversely proportional to those of milk, and the possible outliers are (35.1, 27.6) and (35.7, 26.7) since these two points are far from other points.\newline\newline
+
+
+**(b)**
+```{r}
+cor(soda, milk, method="pearson")
+cor(soda, milk, method="kendall")
+cor(soda, milk, method="spearman")
+```
+$\text{Pearson's correlation} = -0.9262881\\
+\text{Kendall's tau} = -0.9047619\\
+\text{Spearman's rho} = -0.9642857$\newline\newline
+
+
+**(c)**
+```{r}
+xy <- data.frame(soda, milk)
+model <- lm(milk ~ soda, data=xy)
+model
+```
+Regression model: $Y = 37.272 - 0.282X$\newline
+The meaning of $\beta$ is the amount of change in the y coordinate(milk) when the corresponding x coordinate(soda) change.\newline\newline
+
+
+**(d)**
+```{r}
+plot(model, which=1)
+plot(model, which=2)
+```
+The residual variance does not conform to uniformity since the line in residual plot should be horizontal, and residual mean isn't 0 as well since the average of the points doen't close to 0. In addition, since the line in Normal Q-Q plot doesn't fit $45^{\circ}$ line and curves down, which means the amount of small values in y coordinate is more than the amount of large values in y coordinate, we could infer that the distribution of residual is not a Normal distribution.
